@@ -250,6 +250,10 @@ if(isset($_POST["post"])){
 				</div>
 			<?php	
 				}else{
+					if(isset($_GET["view"])){
+						include_once($_GET["view"]);
+					}
+					
 					if(!isset($_GET["id"])){
 					?>
 						<h3>
