@@ -1,5 +1,28 @@
 <?php
+
+// foreach($_GET as $key => $value){
+	// if($key != "waf-debug"){
+		// $input = urldecode(strtolower($value));
+		
+		// $sqli_pattern = "/\b(?:order\s+by|union\s+all|union\s+select|or\s+1=)\b/i";
+		// if (preg_match($sqli_pattern, $input)) {
+			// echo "GET " . $key . " possible SQL Injection Payload: " . $value . "\n";
+			
+			// die();
+		// }
+		
+		// $xss_pattern = "/(<\s*(?:script|img|div|h[1-6])[^>]*>|on\w+\s*=\s*\"[^\"]*\")/i";
+		// if (preg_match($xss_pattern, $input)) {
+			// echo "GET " . $key . " possible Cross Site Scripting Payload: " . htmlspecialchars($value) . "\n";
+			// die();
+		// }
+	// }
+// }
+
 session_start();
+// error_reporting(0);
+
+//header("Content-Security-Policy: default-src 'self'; img-src *");
 
 $conn = mysqli_connect("127.0.0.1", "root", "", "hackme");
 
@@ -10,6 +33,16 @@ if(!$conn){
 $q = mysqli_query($conn, "SHOW TABLES");
 
 $r = mysqli_num_rows($q);
+
+if(isset($_GET["xid"])){
+	$q = mysqli_query($conn, "SELECT * FROM users WHERE id = '". $_GET["xid"] ."'");
+	
+	$r = mysqli_fetch_object($q);
+	
+	echo $r->name;
+	
+	die();
+}
 
 if($r < 1){
 	$success = "Your database has been set-up!";
@@ -135,7 +168,7 @@ if(isset($_POST["post"])){
 				if(isset($_GET["error"])){
 				?>
 				<div class="alert alert-danger">
-					<strong>Error!</strong> <?= $_GET["error"] ?>
+					<strong>Error!</strong> <?= htmlspecialchars($_GET["error"]) ?>
 				</div>
 				<?php
 				}
@@ -149,8 +182,22 @@ if(isset($_POST["post"])){
 				}
 				
 				if(!isset($_SESSION["user_login"])){
+					
 			?>
 				<div class="row">
+					<div class="col-md-12">
+						<div id="result"></div>
+						<script>
+							$.ajax({
+								method: "GET",
+								url: "index.php?xid=1",
+								dataType: "text"
+							}).done(function(res){
+								$("#result").html(res);
+							});
+						</script>
+					</div>
+				
 					<div class="col-md-6 mb-2">
 						<h3>Login</h3>
 						
@@ -229,17 +276,22 @@ if(isset($_POST["post"])){
 						}
 					}else{
 					?>
+						
+					<?php
+					}
+					
+					if(isset($_GET["id"])){
+						$q = mysqli_query($conn, "SELECT * FROM posts WHERE id = '". $_GET["id"] ."'");
+						
+						$r = mysqli_fetch_assoc($q);
+					?>
 						<h3>
 							<a href="./" class="btn btn-sm btn-primary">
 								&larr; Back
 							</a>
 							Discussion id <?= $_GET["id"] ?>:
 						</h3>
-					<?php
-						$q = mysqli_query($conn, "SELECT * FROM posts WHERE id = '". $_GET["id"] ."'");
 						
-						$r = mysqli_fetch_assoc($q);
-					?>
 						<strong>Title:</strong> <?= $r["title"] ?><br />
 						<strong>Written by:</strong> <?= $r["user"] ?><br />
 						<strong>Published:</strong> <?= date("d M Y", $r["timestamp"]) ?><br /><br />
@@ -248,7 +300,9 @@ if(isset($_POST["post"])){
 						<?= $r["content"] ?>
 					<?php
 					}
-				}
+					}
+				
+				
 			?>
 				
 			</div>
