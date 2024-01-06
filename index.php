@@ -34,12 +34,18 @@ $q = mysqli_query($conn, "SHOW TABLES");
 
 $r = mysqli_num_rows($q);
 
-if(isset($_GET["xid"])){
-	$q = mysqli_query($conn, "SELECT * FROM users WHERE id = '". $_GET["xid"] ."'");
+if(isset($_GET["api"])){
+	header("Content-Type: application/json");
 	
-	$r = mysqli_fetch_object($q);
+	if(isset($_POST["token"]) && $_POST["token"] == "thisissecuredlongtoken"){
+		$q = mysqli_query($conn, "SELECT id, name FROM users WHERE id = '". $_POST["uid"] ."'");
 	
-	echo $r->name;
+		$r = mysqli_fetch_object($q);
+		
+		echo json_encode($r);
+	}else{
+		echo json_encode(["status" => "error"]);
+	}
 	
 	die();
 }
@@ -189,11 +195,16 @@ if(isset($_POST["post"])){
 						<div id="result"></div>
 						<script>
 							$.ajax({
-								method: "GET",
-								url: "index.php?xid=1",
-								dataType: "text"
+								method: "POST",
+								url: "index.php?api",
+								dataType: "json",
+								data: {
+									uid: 1,
+									token: "thisissecuredlongtoken"
+								}
 							}).done(function(res){
-								$("#result").html(res);
+								console.log(res);
+								$("#result").html(res.name);
 							});
 						</script>
 					</div>
@@ -274,10 +285,6 @@ if(isset($_POST["post"])){
 						</div>
 					<?php
 						}
-					}else{
-					?>
-						
-					<?php
 					}
 					
 					if(isset($_GET["id"])){
@@ -300,11 +307,8 @@ if(isset($_POST["post"])){
 						<?= $r["content"] ?>
 					<?php
 					}
-					}
-				
-				
-			?>
-				
+				}				
+			?>				
 			</div>
 		</div>
 	</div>
