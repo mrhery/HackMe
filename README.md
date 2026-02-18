@@ -1,11 +1,3 @@
-That’s a great idea 👍 Especially since you already built it in 2021 — now you can turn it into a proper learning lab project.
-
-Since this is a **deliberately vulnerable demo app (PHP + MySQL)** for educational purposes, your write-up should be structured clearly and responsibly.
-
-Below is a **recommended structure** you can use for your GitHub README or documentation page.
-
----
-
 # 🛡️ HackMe Web – Educational Web Hacking Lab
 
 ## 1️⃣ Project Introduction
@@ -90,3 +82,17 @@ Using XAMPP:
 ```
 http://localhost/hackme-web
 ```
+
+### Support Vulnerabilities:
+1. SQLi Login Bypass
+2. SQLi POST
+3. SQLi GET
+4. SQLi Shell Code
+5. Remote Code Execution (RCE)
+6. XSS Attack
+7. Stored XSS
+8. Session Hijacking
+9. Server Site Request Forgery (SSRF)
+10. Cross Site Request Forgery (CSRF)
+11. Spam Attack
+12. Brute-force Attack
